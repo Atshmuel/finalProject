@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S-Bin: מהפכה בניהול פסולת</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Eco-Tech Harmony -->
+    <!-- Application Structure Plan: האפליקציה בנויה כדף יחיד עם ניווט עליון המאפשר גלילה חלקה בין חלקים נושאיים. המבנה נבחר כדי להוביל את המשתמש במסע הגיוני: פתיחה עם הבעיה הכואבת, הצגת הפתרון החדשני, מיצובו בשוק התחרותי (עם דגש על קק"ל כלקוח עוגן), ולבסוף פירוט המודל העסקי. מבנה זה מאפשר חקירה לא ליניארית ומעודד הבנה מעמיקה יותר מאשר מצגת סטטית. האינטראקטיביות מתמקדת בהמחשת הפתרון (לוח בקרה מדומה) ובהצגת הנתונים באופן ויזואלי. -->
+    <!-- Visualization & Content Choices: 
+        - הבעיה: Goal=Inform/Emphasize, Method=Cards + Bar Chart (Chart.js), Interaction=Hover on cards, Justification=Visual impact for inefficiency.
+        - הפתרון: Goal=Explain/Demonstrate, Method=HTML/CSS Flow Diagram + Interactive Map Mockup, Interaction=Click on bins to show tooltips (Vanilla JS), Justification=Turns abstract concept into a tangible, interactive experience.
+        - השוק (מתחרים): Goal=Compare, Method=Styled HTML Table, Interaction=Row hover, Justification=Clear, direct comparison.
+        - השוק (לקוחות): Goal=Organize/Emphasize, Method=Main highlighted card for KKL + secondary cards, Interaction=None, Justification=Emphasizes strategic focus on anchor client.
+        - המודל העסקי: Goal=Clarify, Method=Side-by-side styled cards, Interaction=None, Justification=Clear differentiation between HaaS and SaaS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Assistant', sans-serif; scroll-behavior: smooth; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .map-pin { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; }
+        .map-pin:hover { transform: scale(1.3); }
+        .pin-green { background-color: #10B981; }
+        .pin-yellow { background-color: #F59E0B; }
+        .pin-red { background-color: #EF4444; }
+        .map-tooltip {
+            visibility: hidden; opacity: 0; transition: opacity 0.3s;
+            position: absolute; left: 50%; transform: translateX(-50%) translateY(-120%);
+            background-color: #1f2937; color: white; padding: 8px 12px; border-radius: 6px;
+            font-size: 0.875rem; white-space: nowrap; z-index: 10;
+        }
+        .map-tooltip.visible { visibility: visible; opacity: 1; }
+        .map-tooltip::after {
+            content: ""; position: absolute; top: 100%; left: 50%;
+            margin-left: -5px; border-width: 5px; border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-emerald-600">S-Bin</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4 space-x-reverse">
+                        <a href="#problem" class="text-slate-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">הבעיה</a>
+                        <a href="#solution" class="text-slate-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">הפתרון</a>
+                        <a href="#market" class="text-slate-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">השוק</a>
+                        <a href="#model" class="text-slate-600 hover:text-emerald-600 px-3 py-2 rounded-md text-sm font-medium">המודל העסקי</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
+                    מהפכה בניהול פסולת.
+                </h1>
+                <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-slate-600">
+                    S-Bin הופך את ניהול הפסולת מתהליך בזבזני ומזהם למערכת חכמה, יעילה ופרואקטיבית המבוססת על נתונים בזמן אמת.
+                </p>
+            </div>
+        </section>
+
+        <section id="problem" class="py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">כאוס של בזבוז וחוסר יעילות</h2>
+                    <p class="mt-4 text-lg text-slate-600">ניהול הפסולת הנוכחי סובל מכשל מערכתי מהותי הנובע מחוסר מוחלט במידע בזמן אמת. המצב הקיים מוביל לנזקים כלכליים, תברואתיים וסביבתיים.</p>
+                </div>
+
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-100 text-emerald-600">
+                            <span class="text-2xl">🚚</span>
+                        </div>
+                        <h3 class="mt-5 text-lg font-semibold text-slate-900">בזבוז משאבים אדיר</h3>
+                        <p class="mt-2 text-base text-slate-600">משאיות נוסעות במסלולים קבועים ומפנות פחים חצי ריקים, תוך בזבוז דלק, זמן עבודה יקר ובלאי רכבים. היעדר נתונים מונע כל אפשרות לאופטימיזציה.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                        <div class="flex items-center justify-center h-12 w-12 rounded-md bg-red-100 text-red-600">
+                            <span class="text-2xl">🗑️</span>
+                        </div>
+                        <h3 class="mt-5 text-lg font-semibold text-slate-900">פחים גדושים ומפגעים</h3>
+                        <p class="mt-2 text-base text-slate-600">פחים שעולים על גדותיהם יוצרים לכלוך, ריחות רעים, מושכים מזיקים ומהווים סכנה ממשית לבריאות הציבור.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                         <div class="flex items-center justify-center h-12 w-12 rounded-md bg-amber-100 text-amber-600">
+                            <span class="text-2xl">📉</span>
+                        </div>
+                        <h3 class="mt-5 text-lg font-semibold text-slate-900">פגיעה באיכות החיים</h3>
+                        <p class="mt-2 text-base text-slate-600">התוצאה הישירה של הכשלים היא פגיעה משמעותית בחזות המרחב הציבורי ובחוויית התושבים.</p>
+                    </div>
+                </div>
+                 <div class="mt-16 text-center">
+                    <h3 class="text-2xl font-bold tracking-tight text-slate-900">המחשת חוסר היעילות</h3>
+                    <p class="mt-2 text-md text-slate-600">בתרחיש טיפוסי, חלק גדול מהפינויים מתבצעים שלא לצורך, בעוד פחים מלאים ממתינים לפינוי.</p>
+                    <div class="chart-container mt-8">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="bg-white py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">הפתרון: מערכת חכמה, סביבה נקייה</h2>
+                    <p class="mt-4 text-lg text-slate-600">S-Bin הוא פתרון הוליסטי שהופך את ניהול הפסולת מתהליך ריאקטיבי לתהליך פרואקטיבי מבוסס נתונים.</p>
+                </div>
+
+                <div class="mt-12">
+                    <h3 class="text-2xl font-bold text-center text-slate-800">איך זה עובד?</h3>
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 items-center gap-8 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center h-20 w-20 rounded-full bg-slate-200 text-3xl">📡</div>
+                            <h4 class="mt-4 text-xl font-semibold">1. חישה (Sense)</h4>
+                            <p class="mt-2 text-slate-600">חיישן אולטרסוני מודד באופן רציף ומדויק את גובה הפסולת בפח.</p>
+                        </div>
+                         <div class="text-4xl text-slate-400 font-light hidden md:block">→</div>
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center h-20 w-20 rounded-full bg-slate-200 text-3xl">☁️</div>
+                            <h4 class="mt-4 text-xl font-semibold">2. תקשורת (Connect)</h4>
+                            <p class="mt-2 text-slate-600">מודול תקשורת (Wi-Fi/Cellular) משדר את הנתונים בזמן אמת לפלטפורמת ענן מאובטחת.</p>
+                        </div>
+                         <div class="text-4xl text-slate-400 font-light hidden md:block">→</div>
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center h-20 w-20 rounded-full bg-slate-200 text-3xl">📊</div>
+                            <h4 class="mt-4 text-xl font-semibold">3. ניהול (Manage)</h4>
+                            <p class="mt-2 text-slate-600">פלטפורמה מרכזית מנתחת את המידע ומציגה אותו באופן ויזואלי ופשוט.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16">
+                    <h3 class="text-2xl font-bold text-center text-slate-800">לוח הבקרה שלך</h3>
+                    <p class="mt-2 text-center text-slate-600">קבל תמונה מלאה על כל הפחים בעיר במבט אחד. לחץ על הפחים במפה כדי לראות את הסטטוס שלהם.</p>
+                    <div class="mt-8 bg-slate-200 rounded-lg p-4 md:p-8 h-[400px] md:h-[500px] relative w-full max-w-4xl mx-auto shadow-inner">
+                        <div id="map-area" class="w-full h-full bg-slate-300 rounded-md relative overflow-hidden">
+                           <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('https://placehold.co/1000x600/e2e8f0/cbd5e1?text=Map')"></div>
+                            <div class="map-pin pin-green" style="top: 20%; left: 30%;" data-status="רמה: 25%, עודכן לפני שעה"></div>
+                            <div class="map-pin pin-red" style="top: 40%; left: 50%;" data-status="רמה: 92%, דורש פינוי!"></div>
+                            <div class="map-pin pin-yellow" style="top: 65%; left: 25%;" data-status="רמה: 68%, עודכן לפני 3 שעות"></div>
+                            <div class="map-pin pin-green" style="top: 70%; left: 70%;" data-status="רמה: 15%, פונה הבוקר"></div>
+                            <div class="map-pin pin-yellow" style="top: 25%; left: 80%;" data-status="רמה: 55%, עודכן לפני 4 שעות"></div>
+                            <div id="mapTooltip" class="map-tooltip"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="market" class="py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">הזדמנות בשוק תחרותי</h2>
+                    <p class="mt-4 text-lg text-slate-600">S-Bin מציע יתרונות ברורים של גמישות, פשטות ועלות תחרותית בשוק הצומח של ניהול פסולת חכם.</p>
+                </div>
+                
+                <div class="mt-16">
+                    <h3 class="text-2xl font-bold text-center text-slate-800 mb-8">קהלי היעד ומיקוד אסטרטגי</h3>
+                    <div class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
+                        <div class="bg-white p-8 rounded-lg border-4 border-emerald-500 shadow-xl flex-grow lg:w-2/3">
+                            <h4 class="text-2xl font-bold text-emerald-700">מיקוד אסטרטגי: קרן קיימת לישראל (קק"ל)</h4>
+                             <p class="mt-2 text-slate-600">אנו מזהים את קק"ל כלקוח העוגן האידיאלי, בשל הצורך המובהק והאתגר הלוגיסטי הייחודי בניהול פסולת ביערות ובפארקים.</p>
+                            <ul class="mt-4 space-y-3 text-slate-700">
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-1 font-bold">✔</span><div><strong>צורך דחוף:</strong> פחים גדושים ביערות ובפארקים פוגעים קשות בחוויית המטיילים, בסביבה ובתדמית הירוקה של הארגון.</div></li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-1 font-bold">✔</span><div><strong>אתגר לוגיסטי:</strong> פינוי לא יעיל בשטחים נרחבים וקשי גישה הוא בזבוז אדיר של משאבים. S-Bin מאפשר תכנון מסלולים אופטימלי המגיע רק לפחים הדורשים פינוי.</div></li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-1 font-bold">✔</span><div><strong>התאמה ערכית:</strong> אימוץ טכנולוגיה ירוקה וחדשנית מתכתב באופן מושלם עם ערכי קק"ל ועם תדמיתה כגוף מוביל בשמירה על הסביבה.</div></li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-1 font-bold">✔</span><div><strong>הוכחת יכולת:</strong> הצלחת פיילוט עם גוף בסדר גודל ובעל מוניטין כמו קק"ל תהווה מקרה מבחן רב עוצמה ותפתח דלתות לרשויות מקומיות ולקוחות גדולים נוספים.</div></li>
+                            </ul>
+                        </div>
+                         <div class="flex flex-col gap-8 lg:w-1/3">
+                            <div class="bg-white p-6 rounded-lg border border-slate-300 shadow-md h-full">
+                                <h4 class="text-xl font-bold text-slate-700">שווקים להתרחבות</h4>
+                                <p class="mt-2 text-slate-600">לאחר הצלחת הפיילוט, נפנה לקהלי יעד נוספים:</p>
+                                <ul class="mt-4 space-y-2 text-sm text-slate-700">
+                                    <li>- רשויות מקומיות ועיריות</li>
+                                    <li>- חברות ניהול פסולת פרטיות</li>
+                                    <li>- עסקים ומוסדות גדולים</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16 overflow-x-auto">
+                    <h3 class="text-2xl font-bold text-center text-slate-800 mb-6">ניתוח מתחרים</h3>
+                    <table class="min-w-full bg-white rounded-lg shadow-md">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="py-3 px-4 text-right font-semibold text-slate-700">תכונה/מתחרה</th>
+                                <th class="py-3 px-4 text-right font-bold text-emerald-700 bg-emerald-50">S-Bin (שלנו)</th>
+                                <th class="py-3 px-4 text-right font-semibold text-slate-700">Bigbelly</th>
+                                <th class="py-3 px-4 text-right font-semibold text-slate-700">Sensoneo</th>
+                                <th class="py-3 px-4 text-right font-semibold text-slate-700">Ecube Labs</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold">טכנולוגיית ליבה</td>
+                                <td class="py-3 px-4 text-emerald-800 bg-emerald-50">חיישן אולטרסוני פשוט ואמין, מערכת ניהול בענן.</td>
+                                <td class="py-3 px-4">פח דוחס פסולת המופעל סולארית.</td>
+                                <td class="py-3 px-4">חיישנים חכמים, תוכנה לתכנון מסלולים.</td>
+                                <td class="py-3 px-4">חיישנים ופחי דחס סולאריים.</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold">גמישות חומרה</td>
+                                <td class="py-3 px-4 text-emerald-800 bg-emerald-50">גבוהה מאוד. ניתן להתקנה על פחים קיימים.</td>
+                                <td class="py-3 px-4">נמוכה. מערכת סגורה של פח ייעודי.</td>
+                                <td class="py-3 px-4">גבוהה. חיישנים למגוון פחים.</td>
+                                <td class="py-3 px-4">בינונית. גם חיישנים וגם פחים.</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-3 px-4 font-semibold">מורכבות ועלות</td>
+                                <td class="py-3 px-4 text-emerald-800 bg-emerald-50">פשוט, יעיל ובעל עלות תחרותית.</td>
+                                <td class="py-3 px-4">יקר ומורכב יותר, דורש השקעה גבוהה.</td>
+                                <td class="py-3 px-4">מקיף אך עלול להיות מורכב ליישום.</td>
+                                <td class="py-3 px-4">פתרון פרימיום, עלות גבוהה.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="model" class="bg-white py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">המודל העסקי: שילוב מנצח</h2>
+                    <p class="mt-4 text-lg text-slate-600">המודל שלנו מבטיח תזרים הכנסות יציב וצומח, תוך מתן גמישות מירבית ללקוח.</p>
+                </div>
+
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="border border-slate-200 rounded-lg p-8 text-center shadow-lg">
+                        <h3 class="text-2xl font-bold text-slate-800">1. רכישת חומרה (HaaS)</h3>
+                        <p class="mt-4 text-slate-600">
+                            הלקוח רוכש את יחידות החישה והתקשורת להתקנה על פחים קיימים, או רוכש פח חכם ייעודי. התשלום הוא חד-פעמי ומכסה את עלויות הייצור, המחקר והפיתוח.
+                        </p>
+                        <div class="mt-6 text-4xl">⚙️</div>
+                        <p class="mt-4 font-bold text-lg text-slate-700">הכנסה ראשונית והחזר השקעה.</p>
+                    </div>
+                    <div class="border-2 border-emerald-500 rounded-lg p-8 text-center shadow-xl bg-emerald-50/50">
+                        <h3 class="text-2xl font-bold text-emerald-700">2. מנוי תוכנה (SaaS)</h3>
+                        <p class="mt-4 text-slate-600">
+                            הלקוח משלם דמי מנוי חודשיים עבור כל פח המחובר למערכת. המנוי מקנה גישה מלאה לפלטפורמת הניהול, כולל התראות, דוחות, תמיכה ועדכונים.
+                        </p>
+                        <div class="mt-6 text-4xl">🔄</div>
+                        <p class="mt-4 font-bold text-lg text-emerald-800">הכנסה קבועה, צומחת וצפויה.</p>
+                    </div>
+                </div>
+                <p class="mt-12 text-center text-lg text-slate-700 font-semibold">
+                    המודל מאפשר ללקוח להתחיל בקטן (פיילוט) ולהתרחב בקלות (Scale-Up) בהתאם לצרכיו, תוך הבטחת ROI מהיר וברור.
+                </p>
+            </div>
+        </section>ֿ <section id="pricing" class="py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">השוואת מחירים: יתרון תחרותי ברור</h2>
+                    <p class="mt-4 text-lg text-slate-600">S-Bin מציע פתרון חסכוני משמעותית מהמתחרים, תוך מתן גמישות מירבית בהשקעה.</p>
+                </div>
+
+                <div class="mt-16">
+                    <h3 class="text-2xl font-bold text-center text-slate-800 mb-8">מחירי S-Bin</h3>
+                    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white border-2 border-emerald-500 rounded-lg p-8 shadow-xl">
+                            <div class="text-center">
+                                <h4 class="text-2xl font-bold text-emerald-700">חיישן S-Bin</h4>
+                                <div class="mt-4">
+                                    <span class="text-4xl font-bold text-slate-900">כ- ₪899</span>
+                                    <span class="text-lg text-slate-600">/יחידה</span>
+                                </div>
+                                <p class="mt-2 text-sm text-slate-500">תשלום חד-פעמי</p>
+                            </div>
+                            <ul class="mt-6 space-y-3 text-slate-700">
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2 font-bold">✔</span>התקנה על פח קיים</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2 font-bold">✔</span>חיישן אולטרסוני מתקדם</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2 font-bold">✔</span>מודול תקשורת Wi-Fi/Cellular</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2 font-bold">✔</span>פאנל סולארי המספק טעינה לסוללה נטענת</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2 font-bold">✔</span>אטימות IP67</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white border border-slate-300 rounded-lg p-8 shadow-md">
+                            <div class="text-center">
+                                <h4 class="text-2xl font-bold text-slate-800">מנוי פלטפורמה</h4>
+                                <div class="mt-4">
+                                    <span class="text-4xl font-bold text-slate-900">₪25</span>
+                                    <span class="text-lg text-slate-600">/חודש לכל פח</span>
+                                </div>
+                                <p class="mt-2 text-sm text-slate-500">ללא התחייבות לתקופה</p>
+                            </div>
+                            <ul class="mt-6 space-y-3 text-slate-700">
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2  font-bold">✔</span>גישה לנתונים בזמן אמת</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2  font-bold">✔</span>התראות חכמות</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2  font-bold">✔</span>דוחות וניתוחים</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2  font-bold">✔</span>תמיכה טכנית מלאה</li>
+                                <li class="flex items-start"><span class="text-emerald-500 mr-2 ml-2  font-bold">✔</span>עדכוני תוכנה</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16">
+                    <h3 class="text-2xl font-bold text-center text-slate-800 mb-8">השוואה מול המתחרים</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="py-3 px-4 text-right font-semibold text-slate-700">פתרון</th>
+                                    <th class="py-3 px-4 text-right font-semibold text-slate-700">עלות ראשונית</th>
+                                    <th class="py-3 px-4 text-right font-semibold text-slate-700">עלות תפעולית</th>
+                                    <th class="py-3 px-4 text-right font-semibold text-slate-700">סה"כ שנתי (10 פחים)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr class="hover:bg-emerald-50 bg-emerald-50/30">
+                                    <td class="py-3 px-4 font-bold text-emerald-800">S-Bin</td>
+                                    <td class="py-3 px-4 text-emerald-800">₪8,990</td>
+                                    <td class="py-3 px-4 text-emerald-800">₪3,000/שנה</td>
+                                    <td class="py-3 px-4 font-bold text-emerald-800">₪11,990</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="py-3 px-4 font-semibold">Bigbelly</td>
+                                    <td class="py-3 px-4">₪67,500+</td>
+                                    <td class="py-3 px-4">₪12,000+/שנה</td>
+                                    <td class="py-3 px-4 font-semibold">₪79,500+</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="py-3 px-4 font-semibold">Sensoneo</td>
+                                    <td class="py-3 px-4">₪13,500+</td>
+                                    <td class="py-3 px-4">₪9,000+/שנה</td>
+                                    <td class="py-3 px-4 font-semibold">₪22,500+</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="py-3 px-4 font-semibold">Ecube Labs</td>
+                                    <td class="py-3 px-4">₪18,000+</td>
+                                    <td class="py-3 px-4">₪8,000+/שנה</td>
+                                    <td class="py-3 px-4 font-semibold">₪26,000+</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-8 text-center">
+                        <div class="inline-flex items-center px-6 py-3 bg-emerald-100 rounded-full text-emerald-800 font-semibold">
+                            <span class="text-2xl mr-2">💰</span>
+                            חיסכון של עד 85% לעומת Bigbelly!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16 bg-slate-50 rounded-lg p-8">
+                    <h3 class="text-2xl font-bold text-center text-slate-800 mb-6">ROI מהיר וחד-משמעי</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="text-3xl font-bold text-emerald-600">50%</div>
+                            <p class="mt-2 text-slate-700">הפחתת עלויות איסוף</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="text-3xl font-bold text-emerald-600">6-8</div>
+                            <p class="mt-2 text-slate-700">חודשים להחזר השקעה</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="text-3xl font-bold text-emerald-600">30%</div>
+                            <p class="mt-2 text-slate-700">הפחתת פליטות CO₂</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+            <p class="font-bold text-xl">S-Bin</p>
+            <p class="mt-2 text-slate-300">ניהול פסולת חכם, לסביבה נקייה ויעילה יותר.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('efficiencyChart').getContext('2d');
+            const efficiencyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['איסופים מתוכננים', 'איסופים נדרשים באמת', 'משאבים מבוזבזים'],
+                    datasets: [{
+                        label: 'יחידות משאב (זמן, דלק)',
+                        data: [100, 45, 55],
+                        backgroundColor: [
+                            'rgba(107, 114, 128, 0.6)',
+                            'rgba(16, 185, 129, 0.6)',
+                            'rgba(239, 68, 68, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(107, 114, 128, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(239, 68, 68, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#475569' }
+                        },
+                        x: {
+                            ticks: { color: '#475569' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: '#1f2937',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 12 }
+                        }
+                    }
+                }
+            });
+
+            const pins = document.querySelectorAll('.map-pin');
+            const tooltip = document.getElementById('mapTooltip');
+
+            pins.forEach(pin => {
+                pin.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    const status = this.dataset.status;
+                    if (tooltip.textContent === status && tooltip.classList.contains('visible')) {
+                         tooltip.classList.remove('visible');
+                    } else {
+                        tooltip.textContent = status;
+                        tooltip.style.left = `${this.offsetLeft + this.offsetWidth / 2}px`;
+                        tooltip.style.top = `${this.offsetTop}px`;
+                        tooltip.classList.add('visible');
+                    }
+                });
+            });
+
+            document.addEventListener('click', function() {
+                if (tooltip.classList.contains('visible')) {
+                    tooltip.classList.remove('visible');
+                }
+            });
+            
+             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
