@@ -15,15 +15,20 @@
             
             /* Main container for snap scrolling */
             main {
-                height: 100vh;
+                height: 100dvh;
                 overflow-y: scroll;
                 scroll-snap-type: y mandatory;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none;  /* IE 10+ */
+            }
+
+            main::-webkit-scrollbar { 
+                display: none;  /* Safari and Chrome */
             }
 
             /* Each section becomes a full-height slide */
             main > section {
-                height: 100vh;
-                min-height: 700px; /* Avoid content squish on short screens */
+                height: 100dvh;
                 scroll-snap-align: start;
                 scroll-snap-stop: always;
                 display: flex;
@@ -176,7 +181,7 @@
     }
         </style>
     </head>
-    <body class="bg-slate-50 text-slate-800">
+    <body class="bg-slate-50 text-slate-800 relative">
     <div class="background-animation">
         <span></span>
         <span></span>
@@ -191,14 +196,14 @@
     </div>
 
 
-        <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <header class="bg-white/80 backdrop-blur-lg absolute top-0 z-50 shadow-sm">
             <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
+                <div class="flex items-center justify-between h-16 px-10">
                     <div class="flex items-center">
                         <span class="text-4xl font-bold text-emerald-600">S-Bin</span>
                     </div>
                     <div class="hidden md:block">
-                        <div class="ml-10 flex items-baseline space-x-4 space-x-reverse">
+                        <div class="mr-12 flex items-baseline space-x-4 space-x-reverse">
                             <a href="#hero" class="text-slate-600 hover:text-emerald-600 px-3 py-2 rounded-md text-lg font-medium">ראשי</a>
                             <a href="#problem" class="text-slate-600 hover:text-emerald-600 px-3 py-2 rounded-md text-lg font-medium">הבעיה</a>
                             <a href="#solution" class="text-slate-600 hover:text-emerald-600 px-3 py-2 rounded-md text-lg font-medium">הפתרון</a>
@@ -327,13 +332,13 @@
             <section id="market" >
                 <div class="container mt-3 mx-auto px-4 sm:px-6 lg:px-8 overflow-y-auto">
                     <div class="text-center">
-                        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">הזדמנות בשוק תחרותי</h2>
+                        <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-5xl">הזדמנות בשוק תחרותי</h2>
                         <p class="mt-2 text-xl text-slate-600">S-Bin מציע יתרונות ברורים של גמישות, פשטות ועלות תחרותית בשוק הצומח של ניהול פסולת חכם.</p>
                     </div>
                     
-                    <div class="mt-4">
-                        <h3 class="text-3xl font-bold text-center text-slate-800 mb-4">קהלי היעד ומיקוד אסטרטגי</h3>
-                        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
+                    <div class="mt-2">
+                        <h3 class="text-2xl font-bold text-center text-slate-800 mb-2">קהלי היעד ומיקוד אסטרטגי</h3>
+                        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-5">
                             <div class="bg-white p-6 rounded-lg border-4 border-emerald-500 shadow-xl flex-grow lg:w-2/3">
                                 <h4 class="text-3xl font-bold text-emerald-700">מיקוד אסטרטגי: קק"ל</h4>
                                 <p class="mt-2 text-xl text-slate-600">אנו מזהים את קק"ל כלקוח העוגן האידיאלי, בשל הצורך המובהק והאתגר הלוגיסטי הייחודי בניהול פסולת ביערות ובפארקים.</p>
@@ -431,12 +436,12 @@
             <section id="pricing">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8 overflow-y-auto">
                     <div class="text-center">
-                        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">השוואת מחירים: יתרון תחרותי ברור</h2>
+                        <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-5xl">השוואת מחירים: יתרון תחרותי ברור</h2>
                         <p class="mt-4 text-xl text-slate-600">S-Bin מציע פתרון חסכוני משמעותית מהמתחרים, תוך מתן גמישות מירבית בהשקעה.</p>
                     </div>
 
-                    <div class="mt-10">
-                        <h3 class="text-4xl font-bold text-center text-slate-800 mb-6">מחירי S-Bin</h3>
+                    <div class="mt-4">
+                        <h3 class="text-2xl font-bold text-center text-slate-800 mb-6">מחירי S-Bin</h3>
                         <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="bg-white border border-slate-300 rounded-lg p-6 shadow-xl">
                                 <div class="text-center">
@@ -505,32 +510,42 @@
                 </div>
             </section>
            <section class="bg-gradient-to-r from-slate-800 to-slate-900 text-white pt-6">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <!-- תודה על ההקשבה -->
             <div class="text-center mb-10">
                 <h2 class="text-4xl md:text-5xl font-bold text-emerald-400 mb-10">תודה על ההקשבה!</h2>
                 
                 <!-- משפט מחץ מעוצב -->
-                <div class="relative mb-8">
+                <div class="relative mb-2">
                     <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-emerald-400/30 to-emerald-500/20 blur-xl rounded-full"></div>
                     <div class="relative bg-gradient-to-r from-slate-700 to-slate-800 border-2 border-emerald-500/50 rounded-2xl p-8 shadow-2xl">
-                        <div class="text-6xl mb-4">🗑️ ← ✨</div>
-                        <h3 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-300 via-emerald-200 to-emerald-300 bg-clip-text text-transparent leading-tight">
+                        <div class="text-2xl mb-4">🗑️ ← ✨</div>
+                        <h3 class="text-1xl md:text-4xl font-bold bg-gradient-to-r from-emerald-300 via-emerald-200 to-emerald-300 bg-clip-text text-transparent leading-tight">
                             "S-Bin, הופכים את הפחים מבעיה לפתרון"
                         </h3>
                         <div class="mt-4 w-24 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 mx-auto rounded-full"></div>
                     </div>
                 </div>
 
-                <p class="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+                <p class="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
                     אנחנו מאמינים ש-S-Bin יכול לשנות את הדרך שבה אנו מנהלים פסולת ולהפוך את הסביבה שלנו לנקייה ויעילה יותר. 
                     בואו ניצור יחד עתיד ירוק וחכם יותר.
                 </p>
+
+                <div class="flex justify-center items-center gap-8 mt-4">
+                    <a href="https://s-bins.duckdns.org/login?email=GuestAdmin@sbin.com" target="_blank" class="relative inline-flex items-center justify-center px-4 py-2 text-lg font-bold text-white transition-all duration-200 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg hover:shadow-emerald-500/30 transform hover:-translate-y-1">
+                        מעבר לפרויקט 🚀
+                    </a>
+                    <div class="mt-2 flex flex-col items-center p-2 bg-slate-800/50 rounded-xl border border-slate-700 backdrop-blur-sm">
+                        <span class="text-slate-400 text-sm mb-1">סיסמת התחברות:</span>
+                        <code class="font-mono text-xl text-emerald-400 tracking-wider select-all cursor-pointer hover:text-emerald-300 transition-colors" title="לחץ להעתקה">123123123@Aa</code>
+                    </div>
+                </div>
             </div>
 
             <!-- פרטי יצירת קשר -->
-            <div class="border-t border-slate-600 pt-10">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-right">
+            <div class="border-t border-slate-600 pt-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center md:text-right">
                     <!-- פרטי קשר ראשיים -->
                     <div class="space-y-4 text-center">
                         <h3 class="text-2xl font-bold text-emerald-400 flex items-center justify-center  mb-8">
@@ -549,8 +564,8 @@
                     </div>
 
                     <!-- רשתות חברתיות -->
-                    <div class="space-y-4 text-center">
-                        <h3 class="text-2xl font-bold text-emerald-400 flex items-center justify-center mb-14">
+                    <div class="space-y-2 text-center">
+                        <h3 class="text-xl font-bold text-emerald-400 flex items-center justify-center mb-10">
                             <span class="ml-2">🌐</span>
                             עקבו אחרינו
                         </h3>
@@ -566,8 +581,8 @@
                     </div>
 
                     <!-- קריאה לפעולה -->
-                    <div class="space-y-4 text-center">
-                        <h3 class="text-2xl font-bold text-emerald-400 flex items-center justify-center ">
+                    <div class="space-y-2 text-center">
+                        <h3 class="text-xl font-bold text-emerald-400 flex items-center justify-center ">
                             <span class="ml-2">🚀</span>
                             בואו נתחיל
                         </h3>
@@ -582,7 +597,7 @@
             </div>
 
             <!-- פסקת סיום -->
-            <div class="border-t border-slate-600 pt-8 mt-10 text-center">
+            <div class="border-t border-slate-600 pt-4 mt-4 text-center">
                 <div class="flex items-center justify-center mb-4">
                     <span class="text-5xl font-bold text-emerald-500">S-Bin</span>
                 </div>
@@ -679,31 +694,23 @@
 
 
             function setupHeaderHiding() {
-    const header = document.querySelector('header');
-    const lastSection = document.querySelector('main section:last-child');
-    
-    if (!header || !lastSection) return;
-    
-    // Create intersection observer
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Hide header when last section is visible
-                header.style.transform = 'translateY(-100%)';
-                header.style.transition = 'transform 0.3s ease-in-out';
-            } else {
-                // Show header when not in last section
-                header.style.transform = 'translateY(0)';
-                header.style.transition = 'transform 0.3s ease-in-out';
+                const header = document.querySelector('header');
+                const main = document.querySelector('main');
+                
+                if (!header || !main) return;
+                
+                main.addEventListener('scroll', () => {
+                    // Hide header when scrolled down more than 10px
+                    if (main.scrollTop > 10) {
+                        header.style.transform = 'translateY(-100%)';
+                        header.style.transition = 'transform 0.3s ease-in-out';
+                    } else {
+                        // Show header only when back at the top
+                        header.style.transform = 'translateY(0)';
+                        header.style.transition = 'transform 0.3s ease-in-out';
+                    }
+                });
             }
-        });
-    }, {
-        threshold: 0.1 // Trigger when 10% of the section is visible
-    });
-    
-    // Start observing the last section
-    observer.observe(lastSection);
-}
 
 document.addEventListener('DOMContentLoaded', setupHeaderHiding);
         </script>
